@@ -89,7 +89,7 @@ public class CFGNode extends GraphNode implements Comparable<CFGNode> {
 	}
 
 	public String toString() {
-		if(statement instanceof CFGMethodEntryNode)
+		if(this instanceof CFGMethodEntryNode)
 			return id + "\t" + "METHOD ENTRY";
 		return id + "\t" + statement.toString();
 	}
