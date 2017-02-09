@@ -1,25 +1,8 @@
 package gr.uom.java.ast;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaModelMarker;
+
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -64,132 +47,8 @@ public class ASTReader {
 
 	private static SystemObject systemObject;
 	private static IJavaProject examinedProject;
-	public static final int JLS = AST.JLS4;
+	public static final int JLS = AST.JLS8;
 
-	public ASTReader(IJavaProject iJavaProject, IProgressMonitor monitor) throws CompilationErrorDetectedException {
-		List<IMarker> markers = buildProject(iJavaProject, monitor);
-		if(!markers.isEmpty()) {
-			throw new CompilationErrorDetectedException(markers);
-		}
-		if(monitor != null)
-			monitor.beginTask("Parsing selected Java Project", getNumberOfCompilationUnits(iJavaProject));
-		systemObject = new SystemObject();
-		examinedProject = iJavaProject;
-		try {
-			IPackageFragmentRoot[] iPackageFragmentRoots = iJavaProject.getPackageFragmentRoots();
-			for(IPackageFragmentRoot iPackageFragmentRoot : iPackageFragmentRoots) {
-				IJavaElement[] children = iPackageFragmentRoot.getChildren();
-				for(IJavaElement child : children) {
-					if(child.getElementType() == IJavaElement.PACKAGE_FRAGMENT) {
-						IPackageFragment iPackageFragment = (IPackageFragment)child;
-						ICompilationUnit[] iCompilationUnits = iPackageFragment.getCompilationUnits();
-						for(ICompilationUnit iCompilationUnit : iCompilationUnits) {
-							if(monitor != null && monitor.isCanceled())
-				    			throw new OperationCanceledException();
-							systemObject.addClasses(parseAST(iCompilationUnit));
-							if(monitor != null)
-								monitor.worked(1);
-						}
-					}
-				}
-			}
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-		}
-		if(monitor != null)
-			monitor.done();
-	}
-
-	public ASTReader(IJavaProject iJavaProject, SystemObject existingSystemObject, IProgressMonitor monitor) throws CompilationErrorDetectedException {
-		List<IMarker> markers = buildProject(iJavaProject, monitor);
-		if(!markers.isEmpty()) {
-			throw new CompilationErrorDetectedException(markers);
-		}
-		Set<ICompilationUnit> changedCompilationUnits = new LinkedHashSet<ICompilationUnit>();
-		Set<ICompilationUnit> addedCompilationUnits = new LinkedHashSet<ICompilationUnit>();
-		Set<ICompilationUnit> removedCompilationUnits = new LinkedHashSet<ICompilationUnit>();
-		CompilationUnitCache instance = CompilationUnitCache.getInstance();
-		for(ICompilationUnit changedCompilationUnit : instance.getChangedCompilationUnits()) {
-			if(changedCompilationUnit.getJavaProject().equals(iJavaProject))
-				changedCompilationUnits.add(changedCompilationUnit);
-		}
-		for(ICompilationUnit addedCompilationUnit : instance.getAddedCompilationUnits()) {
-			if(addedCompilationUnit.getJavaProject().equals(iJavaProject))
-				addedCompilationUnits.add(addedCompilationUnit);
-		}
-		for(ICompilationUnit removedCompilationUnit : instance.getRemovedCompilationUnits()) {
-			if(removedCompilationUnit.getJavaProject().equals(iJavaProject))
-				removedCompilationUnits.add(removedCompilationUnit);
-		}
-		if(monitor != null)
-			monitor.beginTask("Parsing changed/added Compilation Units",
-					changedCompilationUnits.size() + addedCompilationUnits.size());
-		systemObject = existingSystemObject;
-		examinedProject = iJavaProject;
-		for(ICompilationUnit removedCompilationUnit : removedCompilationUnits) {
-			IFile removedCompilationUnitFile = (IFile)removedCompilationUnit.getResource();
-			systemObject.removeClasses(removedCompilationUnitFile);
-		}
-		for(ICompilationUnit changedCompilationUnit : changedCompilationUnits) {
-			List<ClassObject> changedClassObjects = parseAST(changedCompilationUnit);
-			for(ClassObject changedClassObject : changedClassObjects) {
-				systemObject.replaceClass(changedClassObject);
-			}
-			if(monitor != null)
-				monitor.worked(1);
-		}
-		for(ICompilationUnit addedCompilationUnit : addedCompilationUnits) {
-			List<ClassObject> addedClassObjects = parseAST(addedCompilationUnit);
-			for(ClassObject addedClassObject : addedClassObjects) {
-				systemObject.addClass(addedClassObject);
-			}
-			if(monitor != null)
-				monitor.worked(1);
-		}
-		instance.clearAffectedCompilationUnits();
-		if(monitor != null)
-			monitor.done();
-	}
-
-	private List<IMarker> buildProject(IJavaProject iJavaProject, IProgressMonitor pm) {
-		ArrayList<IMarker> result = new ArrayList<IMarker>();
-		try {
-			IProject project = iJavaProject.getProject();
-			project.refreshLocal(IResource.DEPTH_INFINITE, pm);	
-			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, pm);
-			IMarker[] markers = null;
-			markers = project.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-			for (IMarker marker: markers) {
-				Integer severityType = (Integer) marker.getAttribute(IMarker.SEVERITY);
-				if (severityType.intValue() == IMarker.SEVERITY_ERROR) {
-					result.add(marker);
-				}
-			}
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-
-	public static int getNumberOfCompilationUnits(IJavaProject iJavaProject) {
-		int numberOfCompilationUnits = 0;
-		try {
-			IPackageFragmentRoot[] iPackageFragmentRoots = iJavaProject.getPackageFragmentRoots();
-			for(IPackageFragmentRoot iPackageFragmentRoot : iPackageFragmentRoots) {
-				IJavaElement[] children = iPackageFragmentRoot.getChildren();
-				for(IJavaElement child : children) {
-					if(child.getElementType() == IJavaElement.PACKAGE_FRAGMENT) {
-						IPackageFragment iPackageFragment = (IPackageFragment)child;
-						ICompilationUnit[] iCompilationUnits = iPackageFragment.getCompilationUnits();
-						numberOfCompilationUnits += iCompilationUnits.length;
-					}
-				}
-			}
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-		}
-		return numberOfCompilationUnits;
-	}
 
 	public static List<AbstractTypeDeclaration> getRecursivelyInnerTypes(AbstractTypeDeclaration typeDeclaration) {
 		List<AbstractTypeDeclaration> innerTypeDeclarations = new ArrayList<AbstractTypeDeclaration>();
@@ -223,28 +82,8 @@ public class ASTReader {
 		return innerTypeDeclarations;
 	}
 
-	private List<ClassObject> parseAST(ICompilationUnit iCompilationUnit) {
-		ASTInformationGenerator.setCurrentITypeRoot(iCompilationUnit);
-		IFile iFile = (IFile)iCompilationUnit.getResource();
-        ASTParser parser = ASTParser.newParser(JLS);
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        parser.setSource(iCompilationUnit);
-        parser.setResolveBindings(true); // we need bindings later on
-        CompilationUnit compilationUnit = (CompilationUnit)parser.createAST(null);
-        
-        return parseAST(compilationUnit, iFile);
-	}
+	private List<ClassObject> parseAST(CompilationUnit compilationUnit) {
 
-	private List<ClassObject> parseAST(CompilationUnit compilationUnit, IFile iFile) {
-		ITextFileBufferManager bufferManager = FileBuffers.getTextFileBufferManager();
-		IPath path = compilationUnit.getJavaElement().getPath();
-		try {
-			bufferManager.connect(path, LocationKind.IFILE, null);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-		ITextFileBuffer textFileBuffer = bufferManager.getTextFileBuffer(path, LocationKind.IFILE);
-		IDocument document = textFileBuffer.getDocument();
 		List<Comment> comments = compilationUnit.getCommentList();
 		List<ClassObject> classObjects = new ArrayList<ClassObject>();
         List<AbstractTypeDeclaration> topLevelTypeDeclarations = compilationUnit.types();
@@ -256,69 +95,28 @@ public class ASTReader {
         		typeDeclarations.addAll(getRecursivelyInnerTypes(topLevelTypeDeclaration));
         		for(AbstractTypeDeclaration typeDeclaration : typeDeclarations) {
         			if(typeDeclaration instanceof TypeDeclaration) {
-        				final ClassObject classObject = processTypeDeclaration(iFile, document, (TypeDeclaration)typeDeclaration, comments);
+        				final ClassObject classObject = processTypeDeclaration(null, null, (TypeDeclaration)typeDeclaration, comments);
         				classObjects.add(classObject);
         			}
         			else if(typeDeclaration instanceof EnumDeclaration) {
-        				final ClassObject classObject = processEnumDeclaration(iFile, document, (EnumDeclaration)typeDeclaration, comments);
+        				final ClassObject classObject = processEnumDeclaration(null, null, (EnumDeclaration)typeDeclaration, comments);
         				classObjects.add(classObject);
         			}
         		}
         	}
         	else if(abstractTypeDeclaration instanceof EnumDeclaration) {
         		EnumDeclaration enumDeclaration = (EnumDeclaration)abstractTypeDeclaration;
-        		final ClassObject classObject = processEnumDeclaration(iFile, document, enumDeclaration, comments);
+        		final ClassObject classObject = processEnumDeclaration(null, null, enumDeclaration, comments);
 	        	classObjects.add(classObject);
         	}
         }
         return classObjects;
 	}
 
-	private List<CommentObject> processComments(IFile iFile, IDocument iDocument,
-			AbstractTypeDeclaration typeDeclaration, List<Comment> comments) {
-		List<CommentObject> commentList = new ArrayList<CommentObject>();
-		int typeDeclarationStartPosition = typeDeclaration.getStartPosition();
-		int typeDeclarationEndPosition = typeDeclarationStartPosition + typeDeclaration.getLength();
-		for(Comment comment : comments) {
-			int commentStartPosition = comment.getStartPosition();
-			int commentEndPosition = commentStartPosition + comment.getLength();
-			int commentStartLine = 0;
-			int commentEndLine = 0;
-			String text = null;
-			try {
-				commentStartLine = iDocument.getLineOfOffset(commentStartPosition);
-				commentEndLine = iDocument.getLineOfOffset(commentEndPosition);
-				text = iDocument.get(commentStartPosition, comment.getLength());
-			} catch (BadLocationException e) {
-				e.printStackTrace();
-			}
-			CommentType type = null;
-			if(comment.isLineComment()) {
-				type = CommentType.LINE;
-			}
-			else if(comment.isBlockComment()) {
-				type = CommentType.BLOCK;
-			}
-			else if(comment.isDocComment()) {
-				type = CommentType.JAVADOC;
-			}
-			CommentObject commentObject = new CommentObject(text, type, commentStartLine, commentEndLine);
-			commentObject.setComment(comment);
-			String fileExtension = iFile.getFileExtension() != null ? "." + iFile.getFileExtension() : "";
-			if(typeDeclarationStartPosition <= commentStartPosition && typeDeclarationEndPosition >= commentEndPosition) {
-				commentList.add(commentObject);
-			}
-			else if(iFile.getName().equals(typeDeclaration.getName().getIdentifier() + fileExtension)) {
-				commentList.add(commentObject);
-			}
-		}
-		return commentList;
-	}
 
 	private ClassObject processTypeDeclaration(IFile iFile, IDocument document, TypeDeclaration typeDeclaration, List<Comment> comments) {
 		final ClassObject classObject = new ClassObject();
 		classObject.setIFile(iFile);
-		classObject.addComments(processComments(iFile, document, typeDeclaration, comments));
 		ITypeBinding typeDeclarationBinding = typeDeclaration.resolveBinding();
 		if(typeDeclarationBinding.isLocal()) {
 			ITypeBinding declaringClass = typeDeclarationBinding.getDeclaringClass();
@@ -382,7 +180,6 @@ public class ASTReader {
 		final ClassObject classObject = new ClassObject();
 		classObject.setEnum(true);
 		classObject.setIFile(iFile);
-		classObject.addComments(processComments(iFile, document, enumDeclaration, comments));
 		classObject.setName(enumDeclaration.resolveBinding().getQualifiedName());
 		classObject.setAbstractTypeDeclaration(enumDeclaration);
 		
