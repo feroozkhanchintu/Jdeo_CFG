@@ -1,35 +1,34 @@
 package gr.uom.java.ast;
 
-import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.NodeFinder;
 
 public class ASTInformation {
 
-	private ITypeRoot iTypeRoot;
+	private CompilationUnit compilationUnit;
 	private int startPosition;
 	private int length;
 	private int nodeType;
 	private volatile int hashCode = 0;
-	
-	public ASTInformation(ITypeRoot iTypeRoot, ASTNode astNode) {
-		this.iTypeRoot = iTypeRoot;
+
+	public ASTInformation(CompilationUnit compilationUnit, ASTNode astNode) {
+		this.compilationUnit = compilationUnit;
 		this.startPosition = astNode.getStartPosition();
 		this.length = astNode.getLength();
 		this.nodeType = astNode.getNodeType();
 	}
 
 	public ASTNode recoverASTNode() {
-        CompilationUnit compilationUnit = CompilationUnitCache.getInstance().getCompilationUnit(iTypeRoot);
-        ASTNode astNode = NodeFinder.perform(compilationUnit, startPosition, length);
+		CompilationUnit compilationUnit = CompilationUnitCache.getInstance().getCompilationUnit(this.compilationUnit);
+		ASTNode astNode = NodeFinder.perform(compilationUnit, startPosition, length);
 		return astNode;
 	}
-	
-	public ITypeRoot getITypeRoot() {
-		return iTypeRoot;
+
+	public CompilationUnit getCompilationUnit() {
+		return compilationUnit;
 	}
-	
+
 	public int getStartPosition() {
 		return startPosition;
 	}
@@ -42,24 +41,25 @@ public class ASTInformation {
 		if(this == o) {
 			return true;
 		}
-		
+
 		if(o instanceof ASTInformation) {
 			ASTInformation astInformation = (ASTInformation)o;
-			return this.iTypeRoot.equals(astInformation.iTypeRoot) &&
+			return this.compilationUnit.equals(astInformation.compilationUnit) &&
 					this.startPosition == astInformation.startPosition &&
 					this.length == astInformation.length &&
 					this.nodeType == astInformation.nodeType;
 		}
 		return false;
 	}
-	
+
 	public int hashCode() {
 		if(hashCode == 0) {
 			int result = 17;
-			result = 37*result + iTypeRoot.hashCode();
+			result = 37*result + compilationUnit.hashCode();
 			result = 37*result + startPosition;
 			result = 37*result + length;
 			result = 37*result + nodeType;
+			hashCode = result;
 		}
 		return hashCode;
 	}
