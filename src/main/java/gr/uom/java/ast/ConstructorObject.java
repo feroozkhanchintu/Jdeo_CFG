@@ -135,11 +135,6 @@ public class ConstructorObject implements AbstractMethodDeclaration {
     			equalParameterTypes(this.getParameterTypeList(), creationObject.getParameterTypeList());
     }
 
-    public boolean equals(ConstructorInvocationObject constructorInvocationObject) {
-    	return this.className.equals(constructorInvocationObject.getOriginClassType().getClassType()) &&
-    			equalParameterTypes(this.getParameterTypeList(), constructorInvocationObject.getParameterTypeList());
-    }
-
     private boolean equalParameterTypes(List<TypeObject> list1, List<TypeObject> list2) {
     	if(list1.size() != list2.size())
     		return false;

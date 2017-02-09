@@ -1,8 +1,5 @@
 package gr.uom.java.ast;
 
-import gr.uom.java.ast.decomposition.MethodBodyObject;
-import gr.uom.java.jdeodorant.refactoring.manipulators.TypeCheckElimination;
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -10,6 +7,7 @@ import java.util.ListIterator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
@@ -72,8 +70,8 @@ public class ClassObject extends ClassDeclarationObject {
     	return this;
     }
 
-    public ITypeRoot getITypeRoot() {
-    	return typeDeclaration.getITypeRoot();
+    public CompilationUnit getCompilationUnit() {
+        return typeDeclaration.getCompilationUnit();
     }
 
     public IFile getIFile() {
@@ -84,90 +82,6 @@ public class ClassObject extends ClassDeclarationObject {
 		iFile = file;
 	}
 
-	public boolean isFriend(String className) {
-		if(superclass != null) {
-			if(superclass.getClassType().equals(className))
-				return true;
-		}
-		for(TypeObject interfaceType : interfaceList) {
-			if(interfaceType.getClassType().equals(className))
-				return true;
-		}
-		for(FieldObject field : fieldList) {
-			TypeObject fieldType = field.getType();
-			if(checkFriendship(fieldType, className))
-				return true;
-		}
-		for(ConstructorObject constructor : constructorList) {
-			ListIterator<ParameterObject> parameterIterator = constructor.getParameterListIterator();
-			while(parameterIterator.hasNext()) {
-				ParameterObject parameter = parameterIterator.next();
-				TypeObject parameterType = parameter.getType();
-				if(checkFriendship(parameterType, className))
-					return true;
-			}
-			for(CreationObject creation : constructor.getCreations()) {
-				TypeObject creationType = creation.getType();
-				if(checkFriendship(creationType, className))
-					return true;
-			}
-		}
-		for(MethodObject method : methodList) {
-			TypeObject returnType = method.getReturnType();
-			if(checkFriendship(returnType, className))
-				return true;
-			ListIterator<ParameterObject> parameterIterator = method.getParameterListIterator();
-			while(parameterIterator.hasNext()) {
-				ParameterObject parameter = parameterIterator.next();
-				TypeObject parameterType = parameter.getType();
-				if(checkFriendship(parameterType, className))
-					return true;
-			}
-			for(CreationObject creation : method.getCreations()) {
-				TypeObject creationType = creation.getType();
-				if(checkFriendship(creationType, className))
-					return true;
-			}
-		}
-		if(superclass != null) {
-			ClassObject superclassObject = ASTReader.getSystemObject().getClassObject(superclass.getClassType());
-			if(superclassObject != null)
-				return superclassObject.isFriend(className);
-		}
-		return false;
-	}
-
-	private boolean checkFriendship(TypeObject type, String className) {
-		if(type.getClassType().equals(className))
-			return true;
-		if(type.getGenericType() != null && type.getGenericType().contains(className))
-			return true;
-		return false;
-	}
-
-    public List<TypeCheckElimination> generateTypeCheckEliminations() {
-    	List<TypeCheckElimination> typeCheckEliminations = new ArrayList<TypeCheckElimination>();
-    	if(!_enum) {
-    		for(MethodObject methodObject : methodList) {
-    			MethodBodyObject methodBodyObject = methodObject.getMethodBody();
-    			if(methodBodyObject != null) {
-    				List<TypeCheckElimination> list = methodBodyObject.generateTypeCheckEliminations();
-    				for(TypeCheckElimination typeCheckElimination : list) {
-    					if(!typeCheckElimination.allTypeCheckBranchesAreEmpty()) {
-    						//TypeCheckCodeFragmentAnalyzer analyzer = new TypeCheckCodeFragmentAnalyzer(typeCheckElimination, typeDeclaration, methodObject.getMethodDeclaration());
-    						TypeCheckCodeFragmentAnalyzer analyzer = new TypeCheckCodeFragmentAnalyzer(typeCheckElimination, (TypeDeclaration)getAbstractTypeDeclaration(),
-    								methodObject.getMethodDeclaration(), iFile);
-    						if((typeCheckElimination.getTypeField() != null || typeCheckElimination.getTypeLocalVariable() != null || typeCheckElimination.getTypeMethodInvocation() != null) &&
-    								typeCheckElimination.allTypeCheckingsContainStaticFieldOrSubclassType() && typeCheckElimination.isApplicable()) {
-    							typeCheckEliminations.add(typeCheckElimination);
-    						}
-    					}
-    				}
-    			}
-    		}
-    	}
-    	return typeCheckEliminations;
-    }
 
     public void setAccess(Access access) {
         this.access = access;
@@ -257,15 +171,6 @@ public class ClassObject extends ClassDeclarationObject {
         return null;
     }
 
-	public ConstructorObject getConstructor(ConstructorInvocationObject cio) {
-        ListIterator<ConstructorObject> ci = getConstructorIterator();
-        while(ci.hasNext()) {
-        	ConstructorObject co = ci.next();
-            if(co.equals(cio))
-                return co;
-        }
-        return null;
-    }
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();

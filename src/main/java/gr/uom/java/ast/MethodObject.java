@@ -121,11 +121,6 @@ public class MethodObject implements AbstractMethodDeclaration {
     	return constructorObject.getMethodBody();
     }
 
-    public MethodInvocationObject generateMethodInvocation() {
-    	return new MethodInvocationObject(TypeObject.extractTypeObject(this.constructorObject.className), this.constructorObject.name, this.returnType, this.constructorObject.getParameterTypeList());
-    }
-
-
     public String getClassName() {
         return constructorObject.getClassName();
     }
@@ -139,53 +134,6 @@ public class MethodObject implements AbstractMethodDeclaration {
     	return constructorObject.getParameter(position);
     }
 
-    public List<MethodInvocationObject> getMethodInvocations() {
-        return constructorObject.getMethodInvocations();
-    }
-
-    public List<SuperMethodInvocationObject> getSuperMethodInvocations() {
-        return constructorObject.getSuperMethodInvocations();
-    }
-
-    public List<ConstructorInvocationObject> getConstructorInvocations() {
-        return constructorObject.getConstructorInvocations();
-    }
-
-    public List<FieldInstructionObject> getFieldInstructions() {
-        return constructorObject.getFieldInstructions();
-    }
-
-	public List<CreationObject> getCreations() {
-		return constructorObject.getCreations();
-	}
-
-	public List<LiteralObject> getLiterals() {
-		return constructorObject.getLiterals();
-	}
-
-	public List<AnonymousClassDeclarationObject> getAnonymousClassDeclarations() {
-		return constructorObject.getAnonymousClassDeclarations();
-	}
-
-	public Set<String> getExceptionsInThrowStatements() {
-		return constructorObject.getExceptionsInThrowStatements();
-	}
-
-    public boolean containsMethodInvocation(MethodInvocationObject methodInvocation) {
-    	return constructorObject.containsMethodInvocation(methodInvocation);
-    }
-
-    public boolean containsFieldInstruction(FieldInstructionObject fieldInstruction) {
-    	return constructorObject.containsFieldInstruction(fieldInstruction);
-    }
-
-    public boolean containsSuperMethodInvocation(SuperMethodInvocationObject superMethodInvocation) {
-    	return constructorObject.containsSuperMethodInvocation(superMethodInvocation);
-    }
-
-    public boolean containsSuperFieldAccess() {
-    	return constructorObject.containsSuperFieldAccess();
-    }
 
     public List<TypeObject> getParameterTypeList() {
     	return constructorObject.getParameterTypeList();
@@ -195,17 +143,6 @@ public class MethodObject implements AbstractMethodDeclaration {
     	return constructorObject.getParameterList();
     }
 
-    public boolean equals(MethodInvocationObject mio) {
-    	return this.getClassName().equals(mio.getOriginClassName()) && this.getName().equals(mio.getMethodName()) &&
-    		this.returnType.equalsClassType(mio.getReturnType()) && equalParameterTypes(this.constructorObject.getParameterTypeList(), mio.getParameterTypeList());
-    		/*this.constructorObject.getParameterTypeList().equals(mio.getParameterTypeList());*/
-    }
-
-    public boolean equals(SuperMethodInvocationObject smio) {
-    	return this.getClassName().equals(smio.getOriginClassName()) && this.getName().equals(smio.getMethodName()) &&
-    		this.returnType.equalsClassType(smio.getReturnType()) && equalParameterTypes(this.constructorObject.getParameterTypeList(), smio.getParameterTypeList());
-    		/*this.constructorObject.getParameterTypeList().equals(smio.getParameterTypeList());*/
-    }
 
     private boolean equalParameterTypes(List<TypeObject> list1, List<TypeObject> list2) {
     	if(list1.size() != list2.size())

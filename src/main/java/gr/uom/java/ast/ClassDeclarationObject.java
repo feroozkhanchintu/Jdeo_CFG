@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.core.ITypeRoot;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
 public abstract class ClassDeclarationObject {
 	protected String name;
@@ -22,7 +23,7 @@ public abstract class ClassDeclarationObject {
 		this.fieldList = new ArrayList<FieldObject>();
 	}
 
-	public abstract ITypeRoot getITypeRoot();
+	public abstract CompilationUnit getCompilationUnit();
 	public abstract ClassObject getClassObject();
 	public abstract IFile getIFile();
 	public abstract TypeObject getSuperclass();
@@ -78,31 +79,6 @@ public abstract class ClassDeclarationObject {
     		ClassObject superClassObject = ASTReader.getSystemObject().getClassObject(superclass.getClassType());
     		if(superClassObject != null)
     			return superClassObject.extendsTestCase();
-    	}
-    	return false;
-    }
-
-    public MethodObject getMethod(SuperMethodInvocationObject smio) {
-        ListIterator<MethodObject> mi = getMethodIterator();
-        while(mi.hasNext()) {
-            MethodObject mo = mi.next();
-            if(mo.equals(smio))
-                return mo;
-        }
-        return null;
-    }
-    public boolean containsFieldInstruction(FieldInstructionObject fieldInstruction) {
-    	for(MethodObject method : methodList) {
-    		if(method.containsFieldInstruction(fieldInstruction))
-    			return true;
-    	}
-    	return false;
-    }
-
-    public boolean containsSuperMethodInvocation(SuperMethodInvocationObject superMethodInvocation) {
-    	for(MethodObject method : methodList) {
-    		if(method.containsSuperMethodInvocation(superMethodInvocation))
-    			return true;
     	}
     	return false;
     }
