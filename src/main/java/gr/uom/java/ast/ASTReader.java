@@ -235,16 +235,9 @@ public class ASTReader {
 	private void processFieldDeclaration(final ClassObject classObject, FieldDeclaration fieldDeclaration) {
 		Type fieldType = fieldDeclaration.getType();
 		ITypeBinding binding = fieldType.resolveBinding();
-		List<CommentObject> fieldDeclarationComments = new ArrayList<CommentObject>();
 		int fieldDeclarationStartPosition = fieldDeclaration.getStartPosition();
 		int fieldDeclarationEndPosition = fieldDeclarationStartPosition + fieldDeclaration.getLength();
-		for(CommentObject comment : classObject.commentList) {
-			int commentStartPosition = comment.getStartPosition();
-			int commentEndPosition = commentStartPosition + comment.getLength();
-			if(fieldDeclarationStartPosition <= commentStartPosition && fieldDeclarationEndPosition >= commentEndPosition) {
-				fieldDeclarationComments.add(comment);
-			}
-		}
+
 		List<VariableDeclarationFragment> fragments = fieldDeclaration.fragments();
 		for(VariableDeclarationFragment fragment : fragments) {
 			String qualifiedName = binding.getQualifiedName();
@@ -253,8 +246,7 @@ public class ASTReader {
 			FieldObject fieldObject = new FieldObject(typeObject, fragment.getName().getIdentifier());
 			fieldObject.setClassName(classObject.getName());
 			fieldObject.setVariableDeclarationFragment(fragment);
-			fieldObject.addComments(fieldDeclarationComments);
-			
+
 			int fieldModifiers = fieldDeclaration.getModifiers();
 			if((fieldModifiers & Modifier.PUBLIC) != 0)
 				fieldObject.setAccess(Access.PUBLIC);
@@ -280,13 +272,6 @@ public class ASTReader {
 		constructorObject.setClassName(classObject.getName());
 		int methodDeclarationStartPosition = methodDeclaration.getStartPosition();
 		int methodDeclarationEndPosition = methodDeclarationStartPosition + methodDeclaration.getLength();
-		for(CommentObject comment : classObject.commentList) {
-			int commentStartPosition = comment.getStartPosition();
-			int commentEndPosition = commentStartPosition + comment.getLength();
-			if(methodDeclarationStartPosition <= commentStartPosition && methodDeclarationEndPosition >= commentEndPosition) {
-				constructorObject.addComment(comment);
-			}
-		}
 		
 		if(methodDeclaration.getJavadoc() != null) {
 			Javadoc javaDoc = methodDeclaration.getJavadoc();
@@ -344,13 +329,6 @@ public class ASTReader {
 			AnonymousClassDeclaration anonymousClassDeclaration = anonymous.getAnonymousClassDeclaration();
 			int anonymousClassDeclarationStartPosition = anonymousClassDeclaration.getStartPosition();
 			int anonymousClassDeclarationEndPosition = anonymousClassDeclarationStartPosition + anonymousClassDeclaration.getLength();
-			for(CommentObject comment : constructorObject.commentList) {
-				int commentStartPosition = comment.getStartPosition();
-				int commentEndPosition = commentStartPosition + comment.getLength();
-				if(anonymousClassDeclarationStartPosition <= commentStartPosition && anonymousClassDeclarationEndPosition >= commentEndPosition) {
-					anonymous.addComment(comment);
-				}
-			}
 		}
 		
 		if(methodDeclaration.isConstructor()) {
