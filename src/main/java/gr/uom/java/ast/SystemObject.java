@@ -1,10 +1,6 @@
 package gr.uom.java.ast;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 
 import java.util.*;
 
@@ -29,40 +25,6 @@ public class SystemObject {
 		for(ClassObject classObject : classObjects)
 			addClass(classObject);
 	}
-
-	public void replaceClass(ClassObject c) {
-		int position = getPositionInClassList(c.getName());
-		if(position != -1) {
-			classList.set(position, c);
-		}
-		else {
-			addClass(c);
-		}
-	}
-
-	public void removeClasses(IFile file) {
-		List<ClassObject> classesToBeRemoved = new ArrayList<ClassObject>();
-		for(ClassObject classObject : classList) {
-			if(classObject.getIFile().equals(file))
-				classesToBeRemoved.add(classObject);
-		}
-		for(ClassObject classObject : classesToBeRemoved) {
-			removeClass(classObject);
-		}
-	}
-
-	public void removeClass(ClassObject c) {
-		int position = getPositionInClassList(c.getName());
-		if(position != -1) {
-			for(int i=position+1; i<classList.size(); i++) {
-				ClassObject classObject = classList.get(i);
-				classNameMap.put(classObject.getName(), classNameMap.get(classObject.getName())-1);
-			}
-			classNameMap.remove(c.getName());
-			classList.remove(c);
-		}
-	}
-
 
 	public ClassObject getClassObject(String className) {
 		Integer pos = classNameMap.get(className);

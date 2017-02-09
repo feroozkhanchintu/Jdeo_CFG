@@ -1,14 +1,9 @@
 package gr.uom.java.ast.decomposition;
 
-import gr.uom.java.ast.util.ExpressionExtractor;
+import org.eclipse.jdt.core.dom.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.jdt.core.dom.ConstructorInvocation;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.ThrowStatement;
 
 /*
  * StatementObject represents the following AST Statement subclasses:

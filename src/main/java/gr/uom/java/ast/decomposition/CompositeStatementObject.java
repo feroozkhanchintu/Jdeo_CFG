@@ -1,9 +1,9 @@
 package gr.uom.java.ast.decomposition;
 
+import org.eclipse.jdt.core.dom.Statement;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.jdt.core.dom.Statement;
 
 /*
  * CompositeStatementObject represents the following AST Statement subclasses:

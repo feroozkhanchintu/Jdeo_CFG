@@ -1,16 +1,9 @@
 package gr.uom.java.ast;
 
 import gr.uom.java.ast.decomposition.MethodBodyObject;
-
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+
+import java.util.*;
 
 public class ConstructorObject implements AbstractMethodDeclaration {
 
