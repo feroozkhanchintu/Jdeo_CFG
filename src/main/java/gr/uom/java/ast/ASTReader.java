@@ -46,7 +46,6 @@ import java.util.Set;
 public class ASTReader {
 
 	private static SystemObject systemObject;
-	private static IJavaProject examinedProject;
 	public static final int JLS = AST.JLS8;
 
 
@@ -379,10 +378,6 @@ public class ASTReader {
 
     public static SystemObject getSystemObject() {
 		return systemObject;
-	}
-
-	public static IJavaProject getExaminedProject() {
-		return examinedProject;
 	}
 
 	public static AST getAST() {
