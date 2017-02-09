@@ -4,8 +4,6 @@ import gr.uom.java.ast.association.Association;
 import gr.uom.java.ast.decomposition.AbstractStatement;
 import gr.uom.java.ast.decomposition.MethodBodyObject;
 import gr.uom.java.ast.decomposition.StatementObject;
-import gr.uom.java.ast.decomposition.cfg.AbstractVariable;
-import gr.uom.java.ast.decomposition.cfg.PlainVariable;
 import gr.uom.java.ast.util.MethodDeclarationUtility;
 
 import java.util.ArrayList;

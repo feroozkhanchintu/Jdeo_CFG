@@ -29,23 +29,7 @@ public class StatementObject extends AbstractStatement {
 	
 	public StatementObject(Statement statement, StatementType type, AbstractMethodFragment parent) {
 		super(statement, type, parent);
-		
-		ExpressionExtractor expressionExtractor = new ExpressionExtractor();
-        List<Expression> assignments = expressionExtractor.getAssignments(statement);
-        List<Expression> postfixExpressions = expressionExtractor.getPostfixExpressions(statement);
-        List<Expression> prefixExpressions = expressionExtractor.getPrefixExpressions(statement);
-        processVariables(expressionExtractor.getVariableInstructions(statement), assignments, postfixExpressions, prefixExpressions);
-		processMethodInvocations(expressionExtractor.getMethodInvocations(statement));
-		processClassInstanceCreations(expressionExtractor.getClassInstanceCreations(statement));
-		processArrayCreations(expressionExtractor.getArrayCreations(statement));
-		//processArrayAccesses(expressionExtractor.getArrayAccesses(statement));
-		processLiterals(expressionExtractor.getLiterals(statement));
-		if(statement instanceof ThrowStatement) {
-			processThrowStatement((ThrowStatement)statement);
-		}
-		if(statement instanceof ConstructorInvocation) {
-			processConstructorInvocation((ConstructorInvocation)statement);
-		}
+
 	}
 
 	public String toString() {

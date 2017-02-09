@@ -1,12 +1,6 @@
 package gr.uom.java.ast;
 
 import gr.uom.java.ast.decomposition.cfg.CFG;
-import gr.uom.java.ast.decomposition.cfg.PDG;
-import gr.uom.java.ast.decomposition.cfg.PDGObjectSliceUnion;
-import gr.uom.java.ast.decomposition.cfg.PDGObjectSliceUnionCollection;
-import gr.uom.java.ast.decomposition.cfg.PDGSliceUnion;
-import gr.uom.java.ast.decomposition.cfg.PDGSliceUnionCollection;
-import gr.uom.java.ast.decomposition.cfg.PlainVariable;
 import gr.uom.java.ast.util.StatementExtractor;
 import gr.uom.java.distance.DistanceMatrix;
 import gr.uom.java.distance.ExtractClassCandidateRefactoring;

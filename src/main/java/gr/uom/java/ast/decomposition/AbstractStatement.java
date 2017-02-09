@@ -26,17 +26,5 @@ public abstract class AbstractStatement extends AbstractMethodFragment {
 		return type;
 	}
 
-	public int getNestingDepth() {
-		AbstractStatement parent = (AbstractStatement) this.getParent();
-		int depth = 0;
-		while (parent != null) {
-			if (!parent.getType().equals(StatementType.BLOCK)) {
-				depth++;
-			}
-			parent = (AbstractStatement) parent.getParent();
-		}
-		return depth;
-	}
-
 	public abstract List<String> stringRepresentation();
 }

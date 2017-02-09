@@ -1,9 +1,5 @@
 package gr.uom.java.ast.util;
 
-import gr.uom.java.ast.decomposition.cfg.AbstractVariable;
-import gr.uom.java.ast.decomposition.cfg.CompositeVariable;
-import gr.uom.java.ast.decomposition.cfg.PlainVariable;
-
 import java.util.ArrayList;
 import java.util.List;
 

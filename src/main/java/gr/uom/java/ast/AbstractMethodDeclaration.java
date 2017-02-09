@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import gr.uom.java.ast.decomposition.MethodBodyObject;
-import gr.uom.java.ast.decomposition.cfg.AbstractVariable;
-import gr.uom.java.ast.decomposition.cfg.PlainVariable;
 
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
