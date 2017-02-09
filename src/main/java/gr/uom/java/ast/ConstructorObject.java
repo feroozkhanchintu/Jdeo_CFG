@@ -48,14 +48,6 @@ public class ConstructorObject implements AbstractMethodDeclaration {
     	return this.methodBody;
     }
 
-    public void addExceptionInJavaDocThrows(String exception) {
-    	this.exceptionsInJavaDocThrows.add(exception);
-    }
-
-    public Set<String> getExceptionsInJavaDocThrows() {
-		return exceptionsInJavaDocThrows;
-	}
-
     public void setAccess(Access access) {
         this.access = access;
     }
@@ -102,19 +94,6 @@ public class ConstructorObject implements AbstractMethodDeclaration {
     		return null;
     }
 
-    public boolean containsSuperMethodInvocation() {
-    	if(methodBody != null)
-    		return methodBody.containsSuperMethodInvocation();
-    	else
-    		return false;
-    }
-
-    public boolean containsSuperFieldAccess() {
-    	if(methodBody != null)
-    		return methodBody.containsSuperFieldAccess();
-    	else
-    		return false;
-    }
 
     public List<TypeObject> getParameterTypeList() {
     	List<TypeObject> list = new ArrayList<TypeObject>();
