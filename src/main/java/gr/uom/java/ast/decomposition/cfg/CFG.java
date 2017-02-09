@@ -25,7 +25,10 @@ public class CFG extends Graph {
 		MethodBodyObject methodBody = method.getMethodBody();
 		if(methodBody != null) {
 			CompositeStatementObject composite = methodBody.getCompositeStatement();
-			process(new ArrayList<CFGNode>(), composite);
+			CFGMethodEntryNode cfgMethodEntryNode = new CFGMethodEntryNode();
+			List<CFGNode> previousNodes = new ArrayList<>();
+			previousNodes.add(cfgMethodEntryNode);
+			process(previousNodes, composite);
 			GraphNode.resetNodeNum();
 			this.basicBlockCFG = new BasicBlockCFG(this);
 		}
