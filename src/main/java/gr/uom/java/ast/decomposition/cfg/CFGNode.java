@@ -6,7 +6,6 @@ import org.eclipse.jdt.core.dom.Statement;
 public class CFGNode extends GraphNode implements Comparable<CFGNode> {
 	private AbstractStatement statement;
 	private BasicBlock basicBlock;
-	private PDGNode pdgNode;
 	private volatile int hashCode = 0;
 
 	public CFGNode(AbstractStatement statement) {
@@ -67,14 +66,6 @@ public class CFGNode extends GraphNode implements Comparable<CFGNode> {
 
 	public BasicBlock getBasicBlock() {
 		return basicBlock;
-	}
-
-	public PDGNode getPDGNode() {
-		return pdgNode;
-	}
-
-	public void setPDGNode(PDGNode pdgNode) {
-		this.pdgNode = pdgNode;
 	}
 
 	public boolean equals(Object o) {

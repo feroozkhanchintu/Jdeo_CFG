@@ -8,24 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CFGTryNode extends CFGBlockNode {
-	private List<String> handledExceptions;
 	private boolean hasResources;
 	public CFGTryNode(AbstractStatement statement) {
 		super(statement);
-		this.handledExceptions = new ArrayList<String>();
 		TryStatementObject tryStatement = (TryStatementObject)statement;
 		this.hasResources = tryStatement.hasResources();
-		for(CatchClauseObject catchClause : tryStatement.getCatchClauses()) {
-			handledExceptions.addAll(catchClause.getExceptionTypes());
-		}
 	}
 	
 	public boolean hasResources() {
 		return hasResources;
-	}
-
-	public List<String> getHandledExceptions() {
-		return handledExceptions;
 	}
 
 	public boolean hasCatchClause() {

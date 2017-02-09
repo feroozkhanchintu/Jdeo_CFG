@@ -179,17 +179,6 @@ public class MethodBodyObject {
 				Block catchClauseBody = catchClause.getBody();
 				CompositeStatementObject catchClauseStatementObject = new CompositeStatementObject(catchClauseBody, StatementType.BLOCK, null);
 				SingleVariableDeclaration variableDeclaration = catchClause.getException();
-				Type variableDeclarationType = variableDeclaration.getType();
-				if(variableDeclarationType instanceof UnionType) {
-					UnionType unionType = (UnionType)variableDeclarationType;
-					List<Type> types = unionType.types();
-					for(Type type : types) {
-						catchClauseObject.addExceptionType(type.resolveBinding().getQualifiedName());
-					}
-				}
-				else {
-					catchClauseObject.addExceptionType(variableDeclarationType.resolveBinding().getQualifiedName());
-				}
 				AbstractExpression variableDeclarationName = new AbstractExpression(variableDeclaration.getName(), child);
 				catchClauseObject.addExpression(variableDeclarationName);
 				if(variableDeclaration.getInitializer() != null) {

@@ -7,12 +7,10 @@ public class CatchClauseObject {
 	
 	private CompositeStatementObject body;
 	private List<AbstractExpression> expressionList;
-	private List<String> exceptionTypes;
 	private TryStatementObject parent;
 	
 	public CatchClauseObject() {
 		this.expressionList = new ArrayList<AbstractExpression>();
-		this.exceptionTypes = new ArrayList<String>();
 		this.parent = null;
 	}
 
@@ -38,14 +36,6 @@ public class CatchClauseObject {
 
 	public List<AbstractExpression> getExpressions() {
 		return expressionList;
-	}
-
-	public List<String> getExceptionTypes() {
-		return exceptionTypes;
-	}
-
-	public void addExceptionType(String exceptionType) {
-		this.exceptionTypes.add(exceptionType);
 	}
 
 	public List<String> stringRepresentation() {
@@ -78,11 +68,6 @@ public class CatchClauseObject {
 		sb.append("catch");
 		if(expressionList.size() > 0) {
 			sb.append("(");
-			if(!exceptionTypes.isEmpty()) {
-				for(int i=0; i<exceptionTypes.size()-1; i++)
-					sb.append(exceptionTypes.get(i)).append(" |");
-				sb.append(exceptionTypes.get(exceptionTypes.size()-1)).append(" ");
-			}
 			for(AbstractExpression expression : expressionList)
 				sb.append(expression.toString());
 			sb.append(")");
