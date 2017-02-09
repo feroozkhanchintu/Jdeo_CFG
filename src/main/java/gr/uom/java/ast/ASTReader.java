@@ -271,27 +271,7 @@ public class ASTReader {
 		constructorObject.setClassName(classObject.getName());
 		int methodDeclarationStartPosition = methodDeclaration.getStartPosition();
 		int methodDeclarationEndPosition = methodDeclarationStartPosition + methodDeclaration.getLength();
-		
-		if(methodDeclaration.getJavadoc() != null) {
-			Javadoc javaDoc = methodDeclaration.getJavadoc();
-			List<TagElement> tags = javaDoc.tags();
-			for(TagElement tagElement : tags) {
-				String tagName = tagElement.getTagName();
-				if(tagName != null && tagName.equals(TagElement.TAG_THROWS)) {
-					List<ASTNode> fragments = tagElement.fragments();
-					for(ASTNode docElement : fragments) {
-						if(docElement instanceof Name) {
-							Name name = (Name)docElement;
-							IBinding binding = name.resolveBinding();
-							if(binding instanceof ITypeBinding) {
-								ITypeBinding typeBinding = (ITypeBinding)binding;
-								constructorObject.addExceptionInJavaDocThrows(typeBinding.getQualifiedName());
-							}
-						}
-					}
-				}
-			}
-		}
+
 		int methodModifiers = methodDeclaration.getModifiers();
 		if((methodModifiers & Modifier.PUBLIC) != 0)
 			constructorObject.setAccess(Access.PUBLIC);

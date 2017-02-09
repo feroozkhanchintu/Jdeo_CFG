@@ -31,7 +31,6 @@ public class ParameterObject extends VariableDeclarationObject {
 
 	public void setSingleVariableDeclaration(SingleVariableDeclaration singleVariableDeclaration) {
 		//this.singleVariableDeclaration = singleVariableDeclaration;
-		this.variableBindingKey = singleVariableDeclaration.resolveBinding().getKey();
 		this.singleVariableDeclaration = ASTInformationGenerator.generateASTInformation(singleVariableDeclaration);
 	}
 
@@ -48,7 +47,7 @@ public class ParameterObject extends VariableDeclarationObject {
         if (o instanceof ParameterObject) {
             ParameterObject parameterObject = (ParameterObject)o;
             return this.type.equals(parameterObject.type) && this.name.equals(parameterObject.name) &&
-            		this.varargs == parameterObject.varargs && this.variableBindingKey.equals(parameterObject.variableBindingKey);
+            		this.varargs == parameterObject.varargs;
         }
         
         return false;
@@ -60,7 +59,6 @@ public class ParameterObject extends VariableDeclarationObject {
 			result = 37*result + name.hashCode();
 			result = 37*result + type.hashCode();
 			result = 37*result + (varargs ? 1 : 0);
-			result = 37*result + variableBindingKey.hashCode();
 			hashCode = result;
 		}
 		return hashCode;

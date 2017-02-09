@@ -37,22 +37,6 @@ public class ClassObject extends ClassDeclarationObject {
         this.access = Access.NONE;
     }
 
-    /*public boolean isInnerClass() {
-    	if(typeDeclaration.getParent() instanceof TypeDeclaration)
-    		return true;
-    	else if(typeDeclaration.getParent() instanceof CompilationUnit)
-    		return false;
-    	return false;
-    }
-
-    public TypeDeclaration getOuterClass() {
-    	if(typeDeclaration.getParent() instanceof TypeDeclaration)
-    		return (TypeDeclaration)typeDeclaration.getParent();
-    	else if(typeDeclaration.getParent() instanceof CompilationUnit)
-    		return null;
-    	return null;
-    }*/
-
     public void setAbstractTypeDeclaration(AbstractTypeDeclaration typeDeclaration) {
     	//this.typeDeclaration = typeDeclaration;
     	this.typeDeclaration = ASTInformationGenerator.generateASTInformation(typeDeclaration);
