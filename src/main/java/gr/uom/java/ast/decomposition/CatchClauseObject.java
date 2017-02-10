@@ -1,18 +1,31 @@
 package gr.uom.java.ast.decomposition;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CatchClause;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class CatchClauseObject {
-	
+public class CatchClauseObject extends CompositeStatementObject{
+
+	private CatchClause catchClause;
 	private CompositeStatementObject body;
 	private List<AbstractExpression> expressionList;
 	private TryStatementObject parent;
 	
-	public CatchClauseObject() {
+	public CatchClauseObject(ASTNode catchNode, AbstractMethodFragment parent) {
+		super(catchNode, StatementType.CATCH, parent);
 		this.expressionList = new ArrayList<AbstractExpression>();
 		this.parent = null;
 	}
+
+	public void setCatchClause(CatchClause catchClause){
+	    this.catchClause = catchClause;
+    }
+
+    public CatchClause getCatchClause(){
+	    return this.catchClause;
+    }
 
     public void setParent(TryStatementObject parent) {
     	this.parent = parent;

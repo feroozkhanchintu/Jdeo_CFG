@@ -175,7 +175,7 @@ public class MethodBodyObject {
 			processStatement(child, tryStatement.getBody());
 			List<CatchClause> catchClauses = tryStatement.catchClauses();
 			for(CatchClause catchClause : catchClauses) {
-				CatchClauseObject catchClauseObject = new CatchClauseObject();
+				CatchClauseObject catchClauseObject = new CatchClauseObject(catchClause, child);
 				Block catchClauseBody = catchClause.getBody();
 				CompositeStatementObject catchClauseStatementObject = new CompositeStatementObject(catchClauseBody, StatementType.BLOCK, null);
 				SingleVariableDeclaration variableDeclaration = catchClause.getException();
@@ -190,6 +190,7 @@ public class MethodBodyObject {
 					processStatement(catchClauseStatementObject, blockStatement);
 				}
 				catchClauseObject.setBody(catchClauseStatementObject);
+				catchClauseObject.setCatchClause(catchClause);
 				child.addCatchClause(catchClauseObject);
 			}
 			Block finallyBlock = tryStatement.getFinally();

@@ -1,6 +1,7 @@
 package gr.uom.java.ast.decomposition.cfg;
 
 import gr.uom.java.ast.decomposition.AbstractStatement;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Statement;
 
 public class CFGNode extends GraphNode implements Comparable<CFGNode> {
@@ -17,7 +18,7 @@ public class CFGNode extends GraphNode implements Comparable<CFGNode> {
 		return statement;
 	}
 
-	public Statement getASTStatement() {
+	public ASTNode getASTStatement() {
 		return statement.getStatement();
 	}
 

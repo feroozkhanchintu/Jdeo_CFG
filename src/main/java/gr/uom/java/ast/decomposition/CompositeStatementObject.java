@@ -1,5 +1,6 @@
 package gr.uom.java.ast.decomposition;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Statement;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class CompositeStatementObject extends AbstractStatement {
 	private List<AbstractStatement> statementList;
 	private List<AbstractExpression> expressionList;
 
-	public CompositeStatementObject(Statement statement, StatementType type, AbstractMethodFragment parent) {
+	public CompositeStatementObject(ASTNode statement, StatementType type, AbstractMethodFragment parent) {
 		super(statement, type, parent);
 		this.statementList = new ArrayList<AbstractStatement>();
 		this.expressionList = new ArrayList<AbstractExpression>();
