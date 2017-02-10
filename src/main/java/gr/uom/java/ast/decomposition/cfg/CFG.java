@@ -652,10 +652,12 @@ public class CFG extends Graph {
 			edges.add(flow);
 		}
 		if(previousNodes.size() > 1) {
-			List<CFGBranchConditionalNode> conditionalNodes = unjoinedConditionalNodes.pop();
-			for(CFGBranchConditionalNode conditionalNode : conditionalNodes) {
-				conditionalNode.setJoinNode(currentNode);
-			}
+		    if(!unjoinedConditionalNodes.empty()) {
+                List<CFGBranchConditionalNode> conditionalNodes = unjoinedConditionalNodes.pop();
+                for (CFGBranchConditionalNode conditionalNode : conditionalNodes) {
+                    conditionalNode.setJoinNode(currentNode);
+                }
+            }
 		}
 	}
 
