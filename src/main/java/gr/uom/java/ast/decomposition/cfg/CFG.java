@@ -30,6 +30,7 @@ public class CFG extends Graph {
 			List<CFGNode> previousNodes = new ArrayList<>();
 			previousNodes.add(cfgMethodEntryNode);
 			previousNodes = process(previousNodes, composite);
+			// TODO: From all CFG Exit Node to Method exit node
 			GraphNode.resetNodeNum();
 			this.basicBlockCFG = new BasicBlockCFG(this);
 		}
@@ -451,8 +452,19 @@ public class CFG extends Graph {
 					flow.setTrueControlFlow(true);
 				edges.add(flow);
 			}
-			else
-				createTopDownFlow(previousNodes, currentNode);
+            else {
+                createTopDownFlow(previousNodes, currentNode);
+                CFGBranchSwitchNode switchNode = getMostRecentSwitchNode();
+
+                if(!previousNodes.contains(switchNode)) {
+                    Flow flow = new Flow(switchNode, currentNode);
+                    if (switchCase.isDefault())
+                        flow.setFalseControlFlow(true);
+                    else
+                        flow.setTrueControlFlow(true);
+                    edges.add(flow);
+                }
+            }
 		}
 		else
 			createTopDownFlow(previousNodes, currentNode);
