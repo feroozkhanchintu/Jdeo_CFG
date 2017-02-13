@@ -38,11 +38,4 @@
             <version>3.10.0</version>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>SpongePowered</id>
-            <url>https://repo.spongepowered.org/maven/</url>
-        </repository>
-    </repositories>
 </project>
