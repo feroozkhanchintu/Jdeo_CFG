@@ -357,8 +357,8 @@ public class ASTReader {
 
     public static void main(String[] args) throws IOException {
 
-//        String folderPath = "/Users/Ferooz/Downloads/crawler4j";
-        String folderPath = "/Users/Ferooz/Downloads/crawler4j-master";
+        String folderPath = "/Users/Ferooz/Git_Src/jOOQ";
+//        String folderPath = "/Users/Ferooz/Downloads/crawler4j-master";
 
         List<File> javaFiles = getAllFilesInDirectory(folderPath, new String[]{"java"});
 
@@ -367,9 +367,9 @@ public class ASTReader {
         ASTReader astReader = new ASTReader();
 
         int i = 1;
-//        for (File file2 : javaFiles) {
+        for (File file2 : javaFiles) {
 
-            File file2 = new File("/Users/Ferooz/Downloads/crawler4j-master/src/main/java/edu/uci/ics/crawler4j/crawler/Page.java");
+//            File file2 = new File("/Users/Ferooz/Downloads/crawler4j-master/src/main/java/edu/uci/ics/crawler4j/crawler/Page.java");
             CompilationUnit compilationUnit = createCompilationUnit(file2.getAbsolutePath(), new String[]{folderPath}, null);
             CompilationUnitCache.compilationUnitList.add(compilationUnit);
             ASTInformationGenerator.setCurrentCompilationUnit(compilationUnit);
@@ -379,11 +379,11 @@ public class ASTReader {
             for (ClassObject classObject : classObjects) {
                 for (MethodObject methodObject : classObject.getMethodList()) {
                     CFG cfg = new CFG(methodObject);
-                    System.out.println(cfg.getEdges());
+//                    System.out.println(cfg.getEdges());
                 }
             }
 
-//        }
+        }
 
     }
 }
