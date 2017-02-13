@@ -3,6 +3,7 @@ package com.codenation.java.pdg;
 import com.codenation.java.pdg.decomposition.AbstractExpression;
 import com.codenation.java.pdg.decomposition.MethodBodyObject;
 import com.codenation.java.pdg.decomposition.cfg.CFG;
+import com.codenation.java.pdg.util.FileUtil;
 import com.codenation.java.pdg.util.StatementExtractor;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IFile;
@@ -53,7 +54,7 @@ public class ASTReader {
         return innerTypeDeclarations;
     }
 
-    private List<ClassObject> parseAST(CompilationUnit compilationUnit) {
+    List<ClassObject> parseAST(CompilationUnit compilationUnit) {
 
         List<ClassObject> classObjects = new ArrayList<ClassObject>();
         List<AbstractTypeDeclaration> topLevelTypeDeclarations = compilationUnit.types();
@@ -314,16 +315,8 @@ public class ASTReader {
         return null;
     }
 
-    public static String getFileContents(String filePath) throws IOException {
-        File file = new File(filePath);
-        if (file.exists() && file.isFile()) {
-            return FileUtils.readFileToString(file, Charset.defaultCharset());
-        }
-        return null;
-    }
-
     public static CompilationUnit createCompilationUnit(String filePath, String[] sources, String[] classpathEntries) throws IOException {
-        String fileContents = getFileContents(filePath);
+        String fileContents = FileUtil.getFileContents(filePath);
 
         ASTParser parser = ASTParser.newParser(AST.JLS8);
         parser.setSource(fileContents.toCharArray());
@@ -346,44 +339,4 @@ public class ASTReader {
         return unit;
     }
 
-
-    public static List<File> getAllFilesInDirectory(String directory, String[] extensions) throws IOException {
-        File file = new File(directory);
-        if (file.exists() && file.isDirectory()) {
-            return (List<File>) FileUtils.listFiles(file, extensions, true);
-        }
-        return null;
-    }
-
-    public static void main(String[] args) throws IOException {
-
-        String folderPath = "/Users/Ferooz/Git_Src/jOOQ";
-//        String folderPath = "/Users/Ferooz/Downloads/crawler4j-master";
-
-        List<File> javaFiles = getAllFilesInDirectory(folderPath, new String[]{"java"});
-
-        System.out.println(javaFiles.size());
-
-        ASTReader astReader = new ASTReader();
-
-        int i = 1;
-        for (File file2 : javaFiles) {
-
-//            File file2 = new File("/Users/Ferooz/Downloads/crawler4j-master/src/main/java/edu/uci/ics/crawler4j/crawler/Page.java");
-            CompilationUnit compilationUnit = createCompilationUnit(file2.getAbsolutePath(), new String[]{folderPath}, null);
-            CompilationUnitCache.compilationUnitList.add(compilationUnit);
-            ASTInformationGenerator.setCurrentCompilationUnit(compilationUnit);
-            List<ClassObject> classObjects = astReader.parseAST(compilationUnit);
-
-            System.out.println(i++ + "   " + file2.getAbsolutePath());
-            for (ClassObject classObject : classObjects) {
-                for (MethodObject methodObject : classObject.getMethodList()) {
-                    CFG cfg = new CFG(methodObject);
-//                    System.out.println(cfg.getEdges());
-                }
-            }
-
-        }
-
-    }
 }
