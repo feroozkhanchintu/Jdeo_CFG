@@ -18,10 +18,13 @@ public class CFG extends Graph {
 	private Map<CFGBlockNode, List<CFGNode>> directlyNestedNodesInBlocks;
 	private BasicBlockCFG basicBlockCFG;
 	private Set<GraphNode> nodesWithReturnEdges;
+	private Set<GraphNode> nodesToMethodExit;
 
 	public CFG(AbstractMethodDeclaration method) {
 	    this.nodesWithReturnEdges = new LinkedHashSet<>();
-		this.method = method;
+        this.nodesToMethodExit = new LinkedHashSet<>();
+
+        this.method = method;
 		this.unjoinedConditionalNodes = new Stack<List<CFGBranchConditionalNode>>();
 		this.switchBreakMap = new LinkedHashMap<CFGBranchSwitchNode, List<CFGNode>>();
 		this.directlyNestedNodesInBlocks = new LinkedHashMap<CFGBlockNode, List<CFGNode>>();
@@ -33,16 +36,31 @@ public class CFG extends Graph {
 			List<CFGNode> previousNodes = new ArrayList<>();
 			previousNodes.add(cfgMethodEntryNode);
 
-			//TODO : Add these previous nodes to the MethodExitNode
 			previousNodes = process(previousNodes, composite);
+			nodesToMethodExit.addAll(previousNodes);
 
 			processReturnAndThrowNodesWithEdges();
+			insertEdgesToMethodExit();
 
 			// TODO: From all CFG Exit Node to Method exit node
 			GraphNode.resetNodeNum();
 			this.basicBlockCFG = new BasicBlockCFG(this);
 		}
 	}
+
+    private void insertEdgesToMethodExit() {
+	    for(GraphNode node : nodes){
+	        if((node instanceof CFGExitNode || node instanceof CFGThrowNode) && node.outgoingEdges.isEmpty())
+                nodesToMethodExit.add(node);
+        }
+
+        CFGMethodExitNode cfgMethodExitNode = new CFGMethodExitNode();
+	    nodes.add(cfgMethodExitNode);
+
+	    Set<CFGNode> nodes = (LinkedHashSet<CFGNode>) (Object)nodesToMethodExit;
+
+	    createTopDownFlow(new ArrayList<>(nodes), cfgMethodExitNode);
+    }
 
     private void processReturnAndThrowNodesWithEdges() {
 
@@ -196,6 +214,7 @@ public class CFG extends Graph {
 				List<CFGNode> preNodesForCatchStatements = new ArrayList<>();
 				preNodesForCatchStatements.add(catchCDGNode);
 				createTopDownFlow(previousNodes, catchCDGNode);
+
 //			    process(previousNodes, catchClauseObject);
 			    process(preNodesForCatchStatements, catchClauseObject.getBody());
             }
@@ -218,8 +237,8 @@ public class CFG extends Graph {
                     }
                 }
 
-                //TODO : Add edges from PreNodes to MethodExitNode
                 previousNodes = process(previousNodes, tryStatement.getFinallyClause());
+                nodesToMethodExit.addAll(previousNodes);
 
                 //To find nodes that can have return statements edges
                 for(GraphNode graphNode : nodes){
@@ -232,6 +251,7 @@ public class CFG extends Graph {
                         }
                     }
                 }
+
             }
 		}
 		else {
