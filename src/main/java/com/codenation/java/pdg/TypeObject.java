@@ -48,16 +48,16 @@ public class TypeObject {
     		//remove < > , and whitespace 
     		String[] thisTokens = this.genericType.split("<|>|,|\\s");
     		String[] otherTokens = typeObject.genericType.split("<|>|,|\\s");
-    		List<String> singleLetters1 = new ArrayList<String>();
-    		List<String> words1 = new ArrayList<String>();
+    		List<String> singleLetters1 = new ArrayList<>();
+    		List<String> words1 = new ArrayList<>();
     		for(String token : thisTokens) {
     			if(token.length() == 1)
     				singleLetters1.add(token);
     			else if(token.length() > 1)
     				words1.add(token);
     		}
-    		List<String> singleLetters2 = new ArrayList<String>();
-    		List<String> words2 = new ArrayList<String>();
+    		List<String> singleLetters2 = new ArrayList<>();
+    		List<String> words2 = new ArrayList<>();
     		for(String token : otherTokens) {
     			if(token.length() == 1)
     				singleLetters2.add(token);

@@ -26,8 +26,8 @@ public class CompositeStatementObject extends AbstractStatement {
 
 	public CompositeStatementObject(ASTNode statement, StatementType type, AbstractMethodFragment parent) {
 		super(statement, type, parent);
-		this.statementList = new ArrayList<AbstractStatement>();
-		this.expressionList = new ArrayList<AbstractExpression>();
+		this.statementList = new ArrayList<>();
+		this.expressionList = new ArrayList<>();
 	}
 
 	public void addStatement(AbstractStatement statement) {
@@ -49,7 +49,7 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	public List<String> stringRepresentation() {
-		List<String> stringRepresentation = new ArrayList<String>();
+		List<String> stringRepresentation = new ArrayList<>();
 		stringRepresentation.add(this.toString());
 		for(AbstractStatement statement : statementList) {
 			stringRepresentation.addAll(statement.stringRepresentation());
@@ -58,7 +58,7 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	public List<CompositeStatementObject> getIfStatements() {
-		List<CompositeStatementObject> ifStatements = new ArrayList<CompositeStatementObject>();
+		List<CompositeStatementObject> ifStatements = new ArrayList<>();
 		if(this.getType().equals(StatementType.IF))
 			ifStatements.add(this);
 		for(AbstractStatement statement : statementList) {
@@ -71,7 +71,7 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	public List<CompositeStatementObject> getSwitchStatements() {
-		List<CompositeStatementObject> switchStatements = new ArrayList<CompositeStatementObject>();
+		List<CompositeStatementObject> switchStatements = new ArrayList<>();
 		if(this.getType().equals(StatementType.SWITCH))
 			switchStatements.add(this);
 		for(AbstractStatement statement : statementList) {
@@ -84,7 +84,7 @@ public class CompositeStatementObject extends AbstractStatement {
 	}
 
 	public List<TryStatementObject> getTryStatements() {
-		List<TryStatementObject> tryStatements = new ArrayList<TryStatementObject>();
+		List<TryStatementObject> tryStatements = new ArrayList<>();
 		if(this.getType().equals(StatementType.TRY))
 			tryStatements.add((TryStatementObject)this);
 		for(AbstractStatement statement : statementList) {

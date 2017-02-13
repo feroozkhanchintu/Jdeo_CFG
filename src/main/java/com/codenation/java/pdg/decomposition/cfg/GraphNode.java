@@ -12,8 +12,8 @@ public class GraphNode {
 	public GraphNode() {
 		nodeNum++;
 		this.id = nodeNum;
-		this.incomingEdges = new LinkedHashSet<GraphEdge>();
-		this.outgoingEdges = new LinkedHashSet<GraphEdge>();
+		this.incomingEdges = new LinkedHashSet<>();
+		this.outgoingEdges = new LinkedHashSet<>();
 	}
 	
 	public int getId() {

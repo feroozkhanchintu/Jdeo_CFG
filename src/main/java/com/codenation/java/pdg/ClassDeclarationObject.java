@@ -13,8 +13,8 @@ public abstract class ClassDeclarationObject {
 	protected List<FieldObject> fieldList;
 
 	public ClassDeclarationObject() {
-		this.methodList = new ArrayList<MethodObject>();
-		this.fieldList = new ArrayList<FieldObject>();
+		this.methodList = new ArrayList<>();
+		this.fieldList = new ArrayList<>();
 	}
 
 	public abstract CompilationUnit getCompilationUnit();

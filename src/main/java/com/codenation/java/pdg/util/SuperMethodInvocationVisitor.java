@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SuperMethodInvocationVisitor extends ASTVisitor {
-	private List<SuperMethodInvocation> superMethodInvocations = new ArrayList<SuperMethodInvocation>();
+	private List<SuperMethodInvocation> superMethodInvocations = new ArrayList<>();
 
 	public boolean visit(SuperMethodInvocation node) {
 		superMethodInvocations.add(node);

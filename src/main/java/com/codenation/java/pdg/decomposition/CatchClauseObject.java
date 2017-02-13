@@ -15,7 +15,7 @@ public class CatchClauseObject extends CompositeStatementObject{
 	
 	public CatchClauseObject(ASTNode catchNode, AbstractMethodFragment parent) {
 		super(catchNode, StatementType.CATCH, parent);
-		this.expressionList = new ArrayList<AbstractExpression>();
+		this.expressionList = new ArrayList<>();
 		this.parent = null;
 	}
 
@@ -52,26 +52,26 @@ public class CatchClauseObject extends CompositeStatementObject{
 	}
 
 	public List<String> stringRepresentation() {
-		List<String> stringRepresentation = new ArrayList<String>();
+		List<String> stringRepresentation = new ArrayList<>();
 		stringRepresentation.add(this.toString());
 		stringRepresentation.addAll(body.stringRepresentation());
 		return stringRepresentation;
 	}
 
 	public List<CompositeStatementObject> getIfStatements() {
-		List<CompositeStatementObject> ifStatements = new ArrayList<CompositeStatementObject>();
+		List<CompositeStatementObject> ifStatements = new ArrayList<>();
 		ifStatements.addAll(body.getIfStatements());
 		return ifStatements;
 	}
 
 	public List<CompositeStatementObject> getSwitchStatements() {
-		List<CompositeStatementObject> switchStatements = new ArrayList<CompositeStatementObject>();
+		List<CompositeStatementObject> switchStatements = new ArrayList<>();
 		switchStatements.addAll(body.getSwitchStatements());
 		return switchStatements;
 	}
 
 	public List<TryStatementObject> getTryStatements() {
-		List<TryStatementObject> tryStatements = new ArrayList<TryStatementObject>();
+		List<TryStatementObject> tryStatements = new ArrayList<>();
 		tryStatements.addAll(body.getTryStatements());
 		return tryStatements;
 	}

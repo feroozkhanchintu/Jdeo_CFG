@@ -10,8 +10,8 @@ public class SystemObject {
 	private Map<String, Integer> classNameMap;
 
 	public SystemObject() {
-		this.classList = new ArrayList<ClassObject>();
-		this.classNameMap = new HashMap<String, Integer>();
+		this.classList = new ArrayList<>();
+		this.classNameMap = new HashMap<>();
 	}
 
 	public void addClass(ClassObject c) {
@@ -53,14 +53,14 @@ public class SystemObject {
 	}
 
 	public Set<ClassObject> getClassObjects() {
-		Set<ClassObject> classObjectSet = new LinkedHashSet<ClassObject>();
+		Set<ClassObject> classObjectSet = new LinkedHashSet<>();
 		classObjectSet.addAll(classList);
 		return classObjectSet;
 	}
 
 
 	public List<String> getClassNames() {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		for(int i=0; i<classList.size(); i++) {
 			names.add(getClassObject(i).getName());
 		}

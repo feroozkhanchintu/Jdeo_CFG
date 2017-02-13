@@ -11,8 +11,8 @@ public class ClassInstanceCreationObject extends CreationObject {
 	
 	public ClassInstanceCreationObject(TypeObject type) {
 		super(type);
-		this.parameterList = new ArrayList<TypeObject>();
-		this.thrownExceptions = new LinkedHashSet<String>();
+		this.parameterList = new ArrayList<>();
+		this.thrownExceptions = new LinkedHashSet<>();
 	}
 
 	public ClassInstanceCreation getClassInstanceCreation() {
@@ -36,7 +36,7 @@ public class ClassInstanceCreationObject extends CreationObject {
     }
 
     public List<String> getParameterList() {
-    	List<String> list = new ArrayList<String>();
+    	List<String> list = new ArrayList<>();
     	for(TypeObject typeObject : parameterList)
     		list.add(typeObject.toString());
     	return list;

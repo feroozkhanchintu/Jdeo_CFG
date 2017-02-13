@@ -26,9 +26,9 @@ public class ClassObject extends ClassDeclarationObject {
     private IFile iFile;
 
     public ClassObject() {
-		this.constructorList = new ArrayList<ConstructorObject>();
-		this.interfaceList = new ArrayList<TypeObject>();
-		this.enumConstantDeclarationList = new ArrayList<EnumConstantDeclarationObject>();
+		this.constructorList = new ArrayList<>();
+		this.interfaceList = new ArrayList<>();
+		this.enumConstantDeclarationList = new ArrayList<>();
 		this._abstract = false;
         this._interface = false;
         this._static = false;
@@ -99,7 +99,7 @@ public class ClassObject extends ClassDeclarationObject {
 	}
 
     public ListIterator<TypeObject> getSuperclassIterator() {
-		List<TypeObject> superclassList = new ArrayList<TypeObject>(interfaceList);
+		List<TypeObject> superclassList = new ArrayList<>(interfaceList);
 		superclassList.add(superclass);
 		return superclassList.listIterator();
 	}

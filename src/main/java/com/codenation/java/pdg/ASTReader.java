@@ -25,7 +25,7 @@ public class ASTReader {
 
 
     public static List<AbstractTypeDeclaration> getRecursivelyInnerTypes(AbstractTypeDeclaration typeDeclaration) {
-        List<AbstractTypeDeclaration> innerTypeDeclarations = new ArrayList<AbstractTypeDeclaration>();
+        List<AbstractTypeDeclaration> innerTypeDeclarations = new ArrayList<>();
         StatementExtractor statementExtractor = new StatementExtractor();
         List<BodyDeclaration> bodyDeclarations = typeDeclaration.bodyDeclarations();
         for (BodyDeclaration bodyDeclaration : bodyDeclarations) {
@@ -56,12 +56,12 @@ public class ASTReader {
 
     List<ClassObject> parseAST(CompilationUnit compilationUnit) {
 
-        List<ClassObject> classObjects = new ArrayList<ClassObject>();
+        List<ClassObject> classObjects = new ArrayList<>();
         List<AbstractTypeDeclaration> topLevelTypeDeclarations = compilationUnit.types();
         for (AbstractTypeDeclaration abstractTypeDeclaration : topLevelTypeDeclarations) {
             if (abstractTypeDeclaration instanceof TypeDeclaration) {
                 TypeDeclaration topLevelTypeDeclaration = (TypeDeclaration) abstractTypeDeclaration;
-                List<AbstractTypeDeclaration> typeDeclarations = new ArrayList<AbstractTypeDeclaration>();
+                List<AbstractTypeDeclaration> typeDeclarations = new ArrayList<>();
                 typeDeclarations.add(topLevelTypeDeclaration);
                 typeDeclarations.addAll(getRecursivelyInnerTypes(topLevelTypeDeclaration));
                 for (AbstractTypeDeclaration typeDeclaration : typeDeclarations) {

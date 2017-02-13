@@ -84,7 +84,7 @@ public class StatementExtractor {
 	}
 	
 	private List<Statement> getStatements(Statement statement) {
-		List<Statement> statementList = new ArrayList<Statement>();
+		List<Statement> statementList = new ArrayList<>();
 		if(statement instanceof Block) {
 			Block block = (Block)statement;
 			List<Statement> blockStatements = block.statements();

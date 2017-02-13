@@ -18,8 +18,8 @@ public class ConstructorObject implements AbstractMethodDeclaration {
     private volatile int hashCode = 0;
 
     public ConstructorObject() {
-		this.parameterList = new ArrayList<ParameterObject>();
-		this.exceptionsInJavaDocThrows = new LinkedHashSet<String>();
+		this.parameterList = new ArrayList<>();
+		this.exceptionsInJavaDocThrows = new LinkedHashSet<>();
         this.access = Access.NONE;
     }
 
@@ -89,14 +89,14 @@ public class ConstructorObject implements AbstractMethodDeclaration {
 
 
     public List<TypeObject> getParameterTypeList() {
-    	List<TypeObject> list = new ArrayList<TypeObject>();
+    	List<TypeObject> list = new ArrayList<>();
     	for(ParameterObject parameterObject : parameterList)
     		list.add(parameterObject.getType());
     	return list;
     }
 
     public List<String> getParameterList() {
-    	List<String> list = new ArrayList<String>();
+    	List<String> list = new ArrayList<>();
     	for(ParameterObject parameterObject : parameterList)
     		list.add(parameterObject.getType().toString());
     	return list;

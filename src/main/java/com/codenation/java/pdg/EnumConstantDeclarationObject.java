@@ -15,7 +15,7 @@ public class EnumConstantDeclarationObject {
     
     public EnumConstantDeclarationObject(String name) {
 		this.name = name;
-		this.arguments = new ArrayList<AbstractExpression>();
+		this.arguments = new ArrayList<>();
 	}
 
 	public void setEnumConstantDeclaration(EnumConstantDeclaration enumConstantDeclaration) {

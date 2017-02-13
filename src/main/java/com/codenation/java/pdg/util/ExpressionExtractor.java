@@ -242,11 +242,11 @@ public class ExpressionExtractor {
 			return getExpressions((Expression)node);
 		else if(node instanceof Statement)
 			return getExpressions((Statement)node);
-		return new ArrayList<Expression>();
+		return new ArrayList<>();
 	}
 
 	private List<Expression> getExpressions(Statement statement) {
-		List<Expression> expressionList = new ArrayList<Expression>();
+		List<Expression> expressionList = new ArrayList<>();
 		if(statement instanceof Block) {
 			Block block = (Block)statement;
 			List<Statement> blockStatements = block.statements();
@@ -402,7 +402,7 @@ public class ExpressionExtractor {
 	}
 	
 	private List<Expression> getExpressions(Expression expression) {
-		List<Expression> expressionList = new ArrayList<Expression>();
+		List<Expression> expressionList = new ArrayList<>();
 		if(expression instanceof MethodInvocation) {
 			MethodInvocation methodInvocation = (MethodInvocation)expression;
 			if(methodInvocation.getExpression() != null)
@@ -592,7 +592,7 @@ public class ExpressionExtractor {
 	}
 	
 	private List<Expression> getExpressions(AnonymousClassDeclaration anonymousClassDeclaration) {
-		List<Expression> expressionList = new ArrayList<Expression>();
+		List<Expression> expressionList = new ArrayList<>();
 		List<BodyDeclaration> bodyDeclarations = anonymousClassDeclaration.bodyDeclarations();
 		for(BodyDeclaration bodyDeclaration : bodyDeclarations) {
 			if(bodyDeclaration instanceof MethodDeclaration) {

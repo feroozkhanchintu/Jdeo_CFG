@@ -25,9 +25,9 @@ public class CFG extends Graph {
         this.nodesToMethodExit = new LinkedHashSet<>();
 
         this.method = method;
-        this.unjoinedConditionalNodes = new Stack<List<CFGBranchConditionalNode>>();
-        this.switchBreakMap = new LinkedHashMap<CFGBranchSwitchNode, List<CFGNode>>();
-        this.directlyNestedNodesInBlocks = new LinkedHashMap<CFGBlockNode, List<CFGNode>>();
+        this.unjoinedConditionalNodes = new Stack<>();
+        this.switchBreakMap = new LinkedHashMap<>();
+        this.directlyNestedNodesInBlocks = new LinkedHashMap<>();
         MethodBodyObject methodBody = method.getMethodBody();
         if (methodBody != null) {
             CompositeStatementObject composite = methodBody.getCompositeStatement();
@@ -42,7 +42,6 @@ public class CFG extends Graph {
             processReturnAndThrowNodesWithEdges();
             insertEdgesToMethodExit();
 
-            // TODO: From all CFG Exit Node to Method exit node
             GraphNode.resetNodeNum();
             this.basicBlockCFG = new BasicBlockCFG(this);
         }
@@ -174,7 +173,7 @@ public class CFG extends Graph {
         nodes.add(synchronizedNode);
         directlyNestedNodesInBlocks.put(synchronizedNode, new ArrayList<CFGNode>());
         createTopDownFlow(previousNodes, synchronizedNode);
-        ArrayList<CFGNode> currentNodes = new ArrayList<CFGNode>();
+        ArrayList<CFGNode> currentNodes = new ArrayList<>();
         currentNodes.add(synchronizedNode);
         previousNodes = currentNodes;
         AbstractStatement firstStatement = compositeStatement.getStatements().get(0);
@@ -245,7 +244,7 @@ public class CFG extends Graph {
             nodes.add(tryNode);
             directlyNestedNodesInBlocks.put(tryNode, new ArrayList<CFGNode>());
             createTopDownFlow(previousNodes, tryNode);
-            ArrayList<CFGNode> currentNodes = new ArrayList<CFGNode>();
+            ArrayList<CFGNode> currentNodes = new ArrayList<>();
             currentNodes.add(tryNode);
             previousNodes = currentNodes;
             AbstractStatement firstStatement = compositeStatement.getStatements().get(0);
@@ -288,7 +287,7 @@ public class CFG extends Graph {
         flow.setTrueControlFlow(true);
         flow.setLoopbackFlow(true);
         edges.add(flow);
-        ArrayList<CFGNode> currentNodes = new ArrayList<CFGNode>();
+        ArrayList<CFGNode> currentNodes = new ArrayList<>();
         currentNodes.add(currentNode);
         previousNodes = currentNodes;
         return previousNodes;
@@ -299,8 +298,8 @@ public class CFG extends Graph {
         nodes.add(currentNode);
         directlyNestedNodeInBlock(currentNode);
         createTopDownFlow(previousNodes, currentNode);
-        previousNodes = new ArrayList<CFGNode>();
-        ArrayList<CFGNode> currentNodes = new ArrayList<CFGNode>();
+        previousNodes = new ArrayList<>();
+        ArrayList<CFGNode> currentNodes = new ArrayList<>();
         currentNodes.add(currentNode);
         previousNodes.addAll(process(currentNodes, compositeStatement));
         for (CFGNode previousNode : previousNodes) {
@@ -328,7 +327,7 @@ public class CFG extends Graph {
 
     private int getAction(CompositeStatementObject parentComposite, int i, CompositeStatementObject childComposite) {
         int action = PUSH_NEW_LIST;
-        List<AbstractStatement> statements = new ArrayList<AbstractStatement>(parentComposite.getStatements());
+        List<AbstractStatement> statements = new ArrayList<>(parentComposite.getStatements());
         CompositeStatementObject parent = (CompositeStatementObject) statements.get(0).getParent();
         boolean isBlockWithoutCompositeParent = isBlockWithoutCompositeParent(parent);
         if (parent.getStatement() instanceof Block)
@@ -337,7 +336,7 @@ public class CFG extends Graph {
         while (parent != null && (parent instanceof TryStatementObject || parent instanceof SynchronizedStatementObject)) {
             CompositeStatementObject tryStatement = parent;
             CompositeStatementObject tryStatementParent = (CompositeStatementObject) tryStatement.getParent();
-            List<AbstractStatement> tryParentStatements = new ArrayList<AbstractStatement>(tryStatementParent.getStatements());
+            List<AbstractStatement> tryParentStatements = new ArrayList<>(tryStatementParent.getStatements());
             if (tryStatementParent.getStatement() instanceof Block)
                 tryStatementParent = (CompositeStatementObject) tryStatementParent.getParent();
             int positionOfTryStatementInParent = 0;
@@ -374,7 +373,7 @@ public class CFG extends Graph {
         }
         if (parent != null && parent.getStatement() instanceof SwitchStatement &&
                 parentComposite.getStatement() instanceof Block) {
-            List<AbstractStatement> switchStatements = new ArrayList<AbstractStatement>(parent.getStatements());
+            List<AbstractStatement> switchStatements = new ArrayList<>(parent.getStatements());
             int positionOfBlockInParentSwitch = 0;
             int j = 0;
             for (AbstractStatement statement : switchStatements) {
@@ -390,7 +389,7 @@ public class CFG extends Graph {
             position = positionOfBlockInParentSwitch + position;
         }
         if (parent != null && isBlockWithoutCompositeParent) {
-            List<AbstractStatement> blockStatements = new ArrayList<AbstractStatement>(parent.getStatements());
+            List<AbstractStatement> blockStatements = new ArrayList<>(parent.getStatements());
             int positionOfBlockInParent = 0;
             int j = 0;
             for (AbstractStatement statement : blockStatements) {
@@ -495,7 +494,7 @@ public class CFG extends Graph {
                 List<CFGNode> breakList = switchBreakMap.get(switchNode);
                 breakList.add(currentNode);
             } else {
-                List<CFGNode> breakList = new ArrayList<CFGNode>();
+                List<CFGNode> breakList = new ArrayList<>();
                 breakList.add(currentNode);
                 switchBreakMap.put(switchNode, breakList);
             }
@@ -525,7 +524,7 @@ public class CFG extends Graph {
             }
         } else
             createTopDownFlow(previousNodes, currentNode);
-        ArrayList<CFGNode> currentNodes = new ArrayList<CFGNode>();
+        ArrayList<CFGNode> currentNodes = new ArrayList<>();
         if (!((currentNode instanceof CFGExitNode) || (currentNode instanceof CFGThrowNode)))
             currentNodes.add(currentNode);
         previousNodes = currentNodes;
@@ -593,8 +592,8 @@ public class CFG extends Graph {
         nodes.add(currentNode);
         directlyNestedNodeInBlock(currentNode);
         createTopDownFlow(previousNodes, currentNode);
-        previousNodes = new ArrayList<CFGNode>();
-        ArrayList<CFGNode> currentNodes = new ArrayList<CFGNode>();
+        previousNodes = new ArrayList<>();
+        ArrayList<CFGNode> currentNodes = new ArrayList<>();
         currentNodes.add(currentNode);
         previousNodes.addAll(process(currentNodes, compositeStatement));
         List<CFGNode> breakList = switchBreakMap.get(currentNode);
@@ -616,20 +615,20 @@ public class CFG extends Graph {
         nodes.add(currentNode);
         directlyNestedNodeInBlock(currentNode);
         createTopDownFlow(previousNodes, currentNode);
-        previousNodes = new ArrayList<CFGNode>();
+        previousNodes = new ArrayList<>();
         List<AbstractStatement> ifStatementList = compositeStatement.getStatements();
         AbstractStatement thenClause = ifStatementList.get(0);
         if (thenClause instanceof StatementObject) {
             StatementObject thenClauseStatement = (StatementObject) thenClause;
             CFGNode thenClauseNode = createNonCompositeNode(thenClauseStatement);
             nodes.add(thenClauseNode);
-            ArrayList<CFGNode> currentNodes = new ArrayList<CFGNode>();
+            ArrayList<CFGNode> currentNodes = new ArrayList<>();
             currentNodes.add(currentNode);
             createTopDownFlow(currentNodes, thenClauseNode);
             previousNodes.add(thenClauseNode);
         } else if (thenClause instanceof CompositeStatementObject) {
             CompositeStatementObject thenClauseCompositeStatement = (CompositeStatementObject) thenClause;
-            ArrayList<CFGNode> currentNodes = new ArrayList<CFGNode>();
+            ArrayList<CFGNode> currentNodes = new ArrayList<>();
             currentNodes.add(currentNode);
             if (thenClauseCompositeStatement.getStatement() instanceof IfStatement)
                 previousNodes.addAll(processIfStatement(currentNodes, thenClauseCompositeStatement, JOIN_TOP_LIST));
@@ -648,13 +647,13 @@ public class CFG extends Graph {
                 StatementObject elseClauseStatement = (StatementObject) elseClause;
                 CFGNode elseClauseNode = createNonCompositeNode(elseClauseStatement);
                 nodes.add(elseClauseNode);
-                ArrayList<CFGNode> currentNodes = new ArrayList<CFGNode>();
+                ArrayList<CFGNode> currentNodes = new ArrayList<>();
                 currentNodes.add(currentNode);
                 createTopDownFlow(currentNodes, elseClauseNode);
                 previousNodes.add(elseClauseNode);
             } else if (elseClause instanceof CompositeStatementObject) {
                 CompositeStatementObject elseClauseCompositeStatement = (CompositeStatementObject) elseClause;
-                ArrayList<CFGNode> currentNodes = new ArrayList<CFGNode>();
+                ArrayList<CFGNode> currentNodes = new ArrayList<>();
                 currentNodes.add(currentNode);
                 if (elseClauseCompositeStatement.getStatement() instanceof IfStatement)
                     previousNodes.addAll(processIfStatement(currentNodes, elseClauseCompositeStatement, JOIN_TOP_LIST));
@@ -684,7 +683,7 @@ public class CFG extends Graph {
             } else {
                 if (!unjoinedConditionalNodes.empty()) {
                     List<CFGBranchConditionalNode> topList = unjoinedConditionalNodes.pop();
-                    List<CFGBranchConditionalNode> list = new ArrayList<CFGBranchConditionalNode>();
+                    List<CFGBranchConditionalNode> list = new ArrayList<>();
                     list.add(currentNode);
                     unjoinedConditionalNodes.push(list);
                     unjoinedConditionalNodes.push(topList);
@@ -692,12 +691,12 @@ public class CFG extends Graph {
             }
         } else if (action == PLACE_NEW_LIST_SECOND_FROM_TOP && !unjoinedConditionalNodes.empty()) {
             List<CFGBranchConditionalNode> topList = unjoinedConditionalNodes.pop();
-            List<CFGBranchConditionalNode> list = new ArrayList<CFGBranchConditionalNode>();
+            List<CFGBranchConditionalNode> list = new ArrayList<>();
             list.add(currentNode);
             unjoinedConditionalNodes.push(list);
             unjoinedConditionalNodes.push(topList);
         } else {
-            List<CFGBranchConditionalNode> list = new ArrayList<CFGBranchConditionalNode>();
+            List<CFGBranchConditionalNode> list = new ArrayList<>();
             list.add(currentNode);
             unjoinedConditionalNodes.push(list);
         }
@@ -750,7 +749,7 @@ public class CFG extends Graph {
     }
 
     private CFGNode getCommonNextNode(List<CFGNode> nodes) {
-        HashMap<CFGNode, Integer> nextNodeCounterMap = new HashMap<CFGNode, Integer>();
+        HashMap<CFGNode, Integer> nextNodeCounterMap = new HashMap<>();
         for (CFGNode node : nodes) {
             for (GraphEdge edge : node.outgoingEdges) {
                 CFGNode nextNode = (CFGNode) edge.dst;

@@ -37,7 +37,7 @@ public abstract class CFGBranchNode extends CFGNode {
 	}
 
 	protected List<BasicBlock> getNestedBasicBlocksToEnd() {
-		List<BasicBlock> blocksBetween = new ArrayList<BasicBlock>();
+		List<BasicBlock> blocksBetween = new ArrayList<>();
 		BasicBlock srcBlock = getBasicBlock();
 		BasicBlock nextBlock = srcBlock;
 		while(nextBlock.getNextBasicBlock() != null) {
@@ -52,10 +52,10 @@ public abstract class CFGBranchNode extends CFGNode {
 	public abstract List<BasicBlock> getNestedBasicBlocks();
 
 	public Set<CFGNode> getImmediatelyNestedNodesFromAST() {
-		Set<CFGNode> nestedNodes = new LinkedHashSet<CFGNode>();
+		Set<CFGNode> nestedNodes = new LinkedHashSet<>();
 		AbstractStatement abstractStatement = getStatement();
 		if(abstractStatement instanceof CompositeStatementObject) {
-			Set<AbstractStatement> nestedStatements = new LinkedHashSet<AbstractStatement>();
+			Set<AbstractStatement> nestedStatements = new LinkedHashSet<>();
 			CompositeStatementObject composite = (CompositeStatementObject)abstractStatement;
 			List<AbstractStatement> statements = composite.getStatements();
 			for(AbstractStatement statement : statements) {
