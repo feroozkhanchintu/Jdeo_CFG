@@ -2,6 +2,7 @@ package gr.uom.java.ast.decomposition.cfg;
 
 import gr.uom.java.ast.AbstractMethodDeclaration;
 import gr.uom.java.ast.decomposition.*;
+import gr.uom.java.ast.util.StatementExtractor;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.*;
@@ -16,8 +17,10 @@ public class CFG extends Graph {
 	private Map<CFGBranchSwitchNode, List<CFGNode>> switchBreakMap;
 	private Map<CFGBlockNode, List<CFGNode>> directlyNestedNodesInBlocks;
 	private BasicBlockCFG basicBlockCFG;
+	private Set<GraphNode> nodesWithReturnEdges;
 
 	public CFG(AbstractMethodDeclaration method) {
+	    this.nodesWithReturnEdges = new LinkedHashSet<>();
 		this.method = method;
 		this.unjoinedConditionalNodes = new Stack<List<CFGBranchConditionalNode>>();
 		this.switchBreakMap = new LinkedHashMap<CFGBranchSwitchNode, List<CFGNode>>();
@@ -29,14 +32,35 @@ public class CFG extends Graph {
 			nodes.add(cfgMethodEntryNode);
 			List<CFGNode> previousNodes = new ArrayList<>();
 			previousNodes.add(cfgMethodEntryNode);
+
+			//TODO : Add these previous nodes to the MethodExitNode
 			previousNodes = process(previousNodes, composite);
+
+			processReturnAndThrowNodesWithEdges();
+
 			// TODO: From all CFG Exit Node to Method exit node
 			GraphNode.resetNodeNum();
 			this.basicBlockCFG = new BasicBlockCFG(this);
 		}
 	}
 
-	public AbstractMethodDeclaration getMethod() {
+    private void processReturnAndThrowNodesWithEdges() {
+
+        Iterator<GraphEdge> cfgEdges = this.edges.iterator();
+
+        while (cfgEdges.hasNext()){
+            Flow flow = (Flow) cfgEdges.next();
+            if(flow.getSrc() instanceof CFGExitNode || flow.getSrc() instanceof CFGThrowNode){
+                if(!nodesWithReturnEdges.contains(flow.getDst())){
+                    flow.getSrc().outgoingEdges.remove(flow);
+                    flow.getDst().incomingEdges.remove(flow);
+                    cfgEdges.remove();
+                }
+            }
+        }
+    }
+
+    public AbstractMethodDeclaration getMethod() {
 		return method;
 	}
 
@@ -169,16 +193,45 @@ public class CFG extends Graph {
 			for(CatchClauseObject catchClauseObject : tryStatement.getCatchClauses()){
 				CFGNode catchCDGNode = new CFGNode(catchClauseObject);
 				nodes.add(catchCDGNode);
-				List<CFGNode> preNodesForCatchStements = new ArrayList<>();
-				preNodesForCatchStements.add(catchCDGNode);
+				List<CFGNode> preNodesForCatchStatements = new ArrayList<>();
+				preNodesForCatchStatements.add(catchCDGNode);
 				createTopDownFlow(previousNodes, catchCDGNode);
 //			    process(previousNodes, catchClauseObject);
-			    process(preNodesForCatchStements, catchClauseObject.getBody());
+			    process(preNodesForCatchStatements, catchClauseObject.getBody());
             }
 
-			previousNodes = process(previousNodes, (CompositeStatementObject)firstStatement);
+            previousNodes = process(previousNodes, (CompositeStatementObject)firstStatement);
+
             if(tryStatement.getFinallyClause() != null){
+                List<Statement> returnAndThrowStatements = new StatementExtractor().getReturnStatements((Statement) tryStatement.getStatement());
+                returnAndThrowStatements.addAll(new StatementExtractor().getThrowsStatement((Statement) tryStatement.getStatement()));
+
+
+                Set<GraphNode> nodesBeforeFinally = new LinkedHashSet<>();
+                nodesBeforeFinally.addAll(nodes);
+
+                for(GraphNode graphNode : nodes){
+                    if(graphNode instanceof CFGExitNode || graphNode instanceof CFGThrowNode){
+                        if(returnAndThrowStatements.contains(((CFGNode) graphNode).getASTStatement()))
+                            if(!previousNodes.contains(graphNode))
+                                previousNodes.add((CFGNode) graphNode);
+                    }
+                }
+
+                //TODO : Add edges from PreNodes to MethodExitNode
                 previousNodes = process(previousNodes, tryStatement.getFinallyClause());
+
+                //To find nodes that can have return statements edges
+                for(GraphNode graphNode : nodes){
+                    if(!nodesBeforeFinally.contains(graphNode)){
+                        for(GraphEdge edge : graphNode.incomingEdges){
+                            if(edge.src instanceof CFGExitNode || edge.src instanceof CFGThrowNode){
+                                nodesWithReturnEdges.add(graphNode);
+                                break;
+                            }
+                        }
+                    }
+                }
             }
 		}
 		else {
@@ -479,7 +532,7 @@ public class CFG extends Graph {
 		else
 			createTopDownFlow(previousNodes, currentNode);
 		ArrayList<CFGNode> currentNodes = new ArrayList<CFGNode>();
-        if(!(currentNode instanceof CFGExitNode))
+        if(!((currentNode instanceof CFGExitNode) || (currentNode instanceof CFGThrowNode)))
             currentNodes.add(currentNode);
 		previousNodes = currentNodes;
 		return previousNodes;
@@ -666,7 +719,13 @@ public class CFG extends Graph {
 			Flow flow = new Flow(previousNode, currentNode);
 			int numberOfImmediateBlocks = getNumberOfImmediateBlocks(currentNode);
 			if(previousNode instanceof CFGBranchNode) {
-				if(currentNode.getId() == previousNode.getId() + 1 + numberOfImmediateBlocks &&
+			    Set<GraphEdge> flow1 = previousNode.outgoingEdges;
+			    boolean flag = false;
+			    for(GraphEdge edge : flow1){
+                    if(((Flow)edge).isTrueControlFlow())
+                        flag = true;
+                }
+				if(!flag && currentNode.getId() == previousNode.getId() + 1 + numberOfImmediateBlocks &&
 						!(previousNode instanceof CFGBranchDoLoopNode))
 					flow.setTrueControlFlow(true);
 				else

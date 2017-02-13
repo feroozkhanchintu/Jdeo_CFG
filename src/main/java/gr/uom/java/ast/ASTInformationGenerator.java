@@ -11,6 +11,10 @@ public class ASTInformationGenerator {
 		compilationUnit = typeRoot;
 	}
 
+	public static CompilationUnit getCurrentCompilationUnit(){
+		return compilationUnit;
+	}
+
 	public static ASTInformation generateASTInformation(ASTNode astNode) {
 		return new ASTInformation(compilationUnit, astNode);
 	}

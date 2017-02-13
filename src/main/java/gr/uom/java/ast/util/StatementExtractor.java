@@ -73,6 +73,11 @@ public class StatementExtractor {
 		return getStatements(statement);
 	}
 
+    public List<Statement> getThrowsStatement(Statement statement) {
+        instanceChecker = new InstanceOfThrowsStatement();
+        return getStatements(statement);
+    }
+
 	public List<Statement> getTypeDeclarationStatements(Statement statement) {
 		instanceChecker = new InstanceOfTypeDeclarationStatement();
 		return getStatements(statement);
@@ -151,6 +156,8 @@ public class StatementExtractor {
 		}
 		else if(statement instanceof ThrowStatement) {
 			ThrowStatement throwStatement = (ThrowStatement)statement;
+            if(instanceChecker.instanceOf(throwStatement))
+                statementList.add(throwStatement);
 		}
 		else if(statement instanceof TryStatement) {
 			TryStatement tryStatement = (TryStatement)statement;
