@@ -13,3 +13,5 @@ hs_err_pid*
 /target/
 /Jdeo_CFG.iml
 /com.codenation.cfg.iml
+.idea
+.DS_Store
